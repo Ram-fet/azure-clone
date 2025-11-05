@@ -1,17 +1,38 @@
 services:
+  # ======================================
+  # 🧠 Backend — FastAPI + OCR + Tesseract
+  # ======================================
   - type: web
     name: azure-backend
     env: docker
     plan: free
+    region: frankfurt
     dockerfilePath: backend/backend.Dockerfile
+    rootDir: backend
     autoDeploy: true
     envVars:
       - key: PORT
         value: 8000
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # Optional: health check endpoint for Render
+      - key: RENDER_EXTERNAL_URL
+        sync: false
 
+  # ======================================
+  # 🎨 Frontend — React + Nginx Proxy to Backend
+  # ======================================
   - type: web
     name: azure-frontend
     env: docker
     plan: free
+    region: frankfurt
     dockerfilePath: frontend/frontend.Dockerfile
+    rootDir: frontend
     autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 80
+      # 👇 Replace with your actual backend service URL after first backend deploy
+      - key: BACKEND_URL
+        value: https://azure-backend.onrender.com
