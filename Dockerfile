@@ -1,22 +1,37 @@
-########## FRONTEND ##########
-FROM node:20-alpine AS frontend
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm install --legacy-peer-deps
-COPY frontend/ .
-RUN npm run build
+# ==========================================================
+# Stage 1 — Build frontend (React/Vite)
+# ==========================================================
+FROM node:18-slim AS frontend
 
-########## BACKEND ##########
+WORKDIR /frontend
+COPY frontend/ ./
+RUN npm install && npm run build
+
+# ==========================================================
+# Stage 2 — Build backend (FastAPI)
+# ==========================================================
 FROM python:3.11-slim AS backend
+
 WORKDIR /app
+
+# Install system dependencies (Poppler, Tesseract)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    tesseract-ocr poppler-utils libgl1 zbar-tools && \
-    rm -rf /var/lib/apt/lists/*
+    poppler-utils \
+    tesseract-ocr \
+    tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY backend/requirements.txt .
+# Copy backend code
+COPY backend/ /app/
+
+# Copy frontend build output
+COPY --from=frontend /frontend/dist ./static
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
-COPY backend/ .
-COPY --from=frontend /app/frontend/dist /app/static
 
+# Expose port
 EXPOSE 8000
+
+# Run FastAPI app
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

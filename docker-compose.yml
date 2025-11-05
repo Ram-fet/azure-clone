@@ -1,8 +1,22 @@
 version: "3.9"
 
 services:
-  app:
-    build: .
+  backend:
+    build:
+      context: .
+      dockerfile: backend/backend.Dockerfile
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/frontend.Dockerfile
+    ports:
+      - "3000:80"
     restart: always

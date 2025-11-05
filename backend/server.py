@@ -1,5 +1,7 @@
 from typing import Optional
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+
 from fastapi import UploadFile, File, Form, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pdf2image import convert_from_bytes
@@ -34,6 +36,8 @@ logger.info("🚀 OCR server starting...")
 
 # ---------------- FastAPI app ----------------
 app = FastAPI(title="OCR + Translate API")
+
+
 
 # Enable CORS
 app.add_middleware(
@@ -396,3 +400,4 @@ async def pdf_to_html_semantic(
 
     url = request.url_for("generated", path=f"{out_id}/index.html")
     return JSONResponse({"url": str(url)})
+

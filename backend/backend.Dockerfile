@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ========================================
 #   Backend Dockerfile  — FastAPI + OCR
 # ========================================
@@ -28,4 +29,41 @@ COPY backend/ /app/
 EXPOSE 8000
 
 # Start FastAPI app
+=======
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    poppler-utils \
+    tesseract-ocr \
+    libzbar0 \
+    libgl1 && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY backend/requirements.txt .
+
+RUN python -m pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir \
+        fastapi \
+        uvicorn[standard] \
+        pdf2image \
+        pytesseract \
+        opencv-python-headless \
+        pyzbar \
+        pdfminer.six \
+        watchdog \
+        transformers \
+        python-multipart \
+        numpy \
+        pillow \
+        pyyaml && \
+    rm -rf /root/.cache/pip
+
+COPY backend/ /app/
+
+EXPOSE 8000
+
+>>>>>>> d0ade36 (Update working Docker setup + backend translation fix)
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

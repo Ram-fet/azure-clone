@@ -1,0 +1,29 @@
+# --- FastAPI core ---
+fastapi
+uvicorn
+python-multipart
+
+# --- OCR and image processing ---
+pytesseract
+opencv-python-headless
+pillow
+numpy
+pdf2image
+pyzbar           # barcode detection
+
+# --- PDF text extraction & conversion ---
+pdfminer.six
+PyMuPDF          # imported as fitz
+
+# --- Translation & language detection ---
+transformers
+torch
+langdetect
+huggingface-hub
+
+# --- Utilities ---
+requests
+loguru           # optional, for better logging (can omit if not used)
+
+# --- Typing / pydantic base ---
+pydantic
