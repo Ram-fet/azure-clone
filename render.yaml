@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: azure-backend
+    env: docker
+    plan: free
+    dockerfilePath: backend/backend.Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 8000
+
+  - type: web
+    name: azure-frontend
+    env: docker
+    plan: free
+    dockerfilePath: frontend/frontend.Dockerfile
+    autoDeploy: true
