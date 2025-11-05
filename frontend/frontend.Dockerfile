@@ -1,20 +1,26 @@
-# ---------- 1. Build Stage ----------
+# ========================================
+#   Frontend Dockerfile — React + Vite + Nginx
+# ========================================
+
+# ----------- 1. Build Stage -----------
 FROM node:20-alpine AS build
 
 WORKDIR /app
 COPY frontend/package*.json ./
-RUN npm ci --legacy-peer-deps
+RUN npm install
 
-COPY frontend/ .
+COPY frontend/ ./
 RUN npm run build
 
-# ---------- 2. Production Stage ----------
+
+# ----------- 2. Runtime Stage (Nginx) -----------
 FROM nginx:alpine
 
-# Copy custom Nginx configuration
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+# ✅ Fix MIME types so mobile browsers don't download the app
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built static files (Vite -> dist/)
+# Copy build output from Vite/React
 COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
